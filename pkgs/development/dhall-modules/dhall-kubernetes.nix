@@ -3,35 +3,39 @@
 let
   makeDhallKubernetes =
     version:
-    { rev
-    , sha256
+    lib.makeOverridable
+      ( { rev
+        , sha256
 
-      # The version of the Kubernetes OpenAPI spec to use.
-      #
-      # This defaults to the latest supported Kubernetes if left unspecified.
-      #
-      # This is only supported by dhall-kubernetes version 3.0.0 or newer.
-    , kubernetesVersion ? null
-    }:
-      buildDhallPackage {
-        name = "dhall-kubernetes-${version}";
+          # The version of the Kubernetes OpenAPI spec to use.
+          #
+          # This defaults to the latest supported Kubernetes if left unspecified.
+          #
+          # This is only supported by dhall-kubernetes version 3.0.0 or newer.
+        , kubernetesVersion ? null
 
-        code =
-          let
-            src = fetchFromGitHub {
-              owner = "dhall-lang";
+        , file ? "package.dhall"
+        }:
+          buildDhallPackage {
+            name = "dhall-kubernetes-${version}";
 
-              repo = "dhall-kubernetes";
+            code =
+              let
+                src = fetchFromGitHub {
+                  owner = "dhall-lang";
 
-              inherit rev sha256;
-            };
+                  repo = "dhall-kubernetes";
 
-            prefix =
-              if kubernetesVersion == null then "" else "${kubernetesVersion}/";
+                  inherit rev sha256;
+                };
 
-          in
-            "${src}/${prefix}package.dhall";
-      };
+                prefix =
+                  if kubernetesVersion == null then "" else "${kubernetesVersion}/";
+
+              in
+                "${src}/${prefix}${file}";
+          }
+      );
 
 in
   lib.mapAttrs makeDhallKubernetes {

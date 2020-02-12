@@ -59,13 +59,13 @@ in
   runCommand name { inherit dependencies; } ''
     set -eu
 
-    mkdir -p cache/dhall
+    mkdir -p ${cacheDhall}
 
     for dependency in $dependencies; do
       ${lndir}/bin/lndir -silent $dependency/${cacheDhall} ${cacheDhall}
     done
 
-    export XDG_CACHE_HOME=$PWD/cache
+    export XDG_CACHE_HOME=$PWD/${cache}
 
     mkdir -p $out/${cacheDhall}
 
