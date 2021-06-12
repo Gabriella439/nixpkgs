@@ -37,6 +37,11 @@
   #
   # If `null`, then no documentation is generated.
 , documentationRoot ? null
+
+  # This is passed as the `--base-import-url` flag to `dhall-docs`.  This flag
+  # has no effect if documentation generation is not enabled (i.e.
+  # `documentationRoot` is `null`).
+, baseImportUrl ? null
 }:
 
 let
@@ -85,6 +90,12 @@ in
     ${lib.optionalString (documentationRoot != null) ''
     mkdir -p $out/${dataDhall}
 
-    XDG_DATA_HOME=$out/${data} ${dhall-docs}/bin/dhall-docs --input '${documentationRoot}' --package-name '${name}' --output-link $out/docs
+    XDG_DATA_HOME=$out/${data} ${dhall-docs}/bin/dhall-docs --output-link $out/docs ${lib.cli.toGNUCommandLineShell {} {
+        input = documentationRoot;
+
+        package-name = name;
+
+        base-import-url = baseImportUrl;
+    }}
     ''}
   ''
