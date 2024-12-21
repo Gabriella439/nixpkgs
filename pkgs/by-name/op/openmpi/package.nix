@@ -26,6 +26,7 @@
   cudaPackages,
   # Enable the Sun Grid Engine bindings
   enableSGE ? false,
+  enablePRRTE ? true,
   # Pass PATH/LD_LIBRARY_PATH to point to current mpirun by default
   enablePrefix ? false,
   # Enable libfabric support (necessary for Omnipath networks) on x86_64 linux
@@ -92,9 +93,9 @@ stdenv.mkDerivation (finalAttrs: {
       pmix
       ucx
       ucc
-      prrte
     ]
     ++ lib.optionals cudaSupport [ cudaPackages.cuda_cudart ]
+    ++ lib.optionals enablePRRTE [ prrte ]
     ++ lib.optionals (stdenv.hostPlatform.isLinux || stdenv.hostPlatform.isFreeBSD) [ rdma-core ]
     # needed for internal pmix
     ++ lib.optionals (!stdenv.hostPlatform.isLinux) [ python3 ]
@@ -119,7 +120,7 @@ stdenv.mkDerivation (finalAttrs: {
     "--with-pmix=${lib.getDev pmix}"
     "--with-pmix-libdir=${lib.getLib pmix}/lib"
     # Puts a "default OMPI_PRTERUN" value to mpirun / mpiexec executables
-    (lib.withFeatureAs stdenv.hostPlatform.isLinux "prrte" (lib.getBin prrte))
+    (lib.withFeatureAs enablePRRTE "prrte" (lib.getBin prrte))
     (lib.withFeature enableSGE "sge")
     (lib.enableFeature enablePrefix "mpirun-prefix-by-default")
     # TODO: add UCX support, which is recommended to use with cuda for the most robust OpenMPI build
