@@ -11,6 +11,7 @@
   setuptools,
   nanobind,
   openmpi,
+  apple-sdk_14,
 }:
 
 let
@@ -75,6 +76,7 @@ buildPythonPackage rec {
   buildInputs = [
     blas
     lapack
+    apple-sdk_14
   ];
 
   meta = with lib; {
