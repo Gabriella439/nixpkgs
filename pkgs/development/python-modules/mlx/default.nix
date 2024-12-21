@@ -10,6 +10,7 @@
   lapack,
   setuptools,
   nanobind,
+  openmpi,
 }:
 
 let
@@ -68,6 +69,7 @@ buildPythonPackage rec {
     nlohmann_json
     setuptools
     nanobind
+    openmpi
   ];
 
   buildInputs = [
