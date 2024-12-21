@@ -28,6 +28,12 @@ let
     rev = "v3.11.3";
     hash = "sha256-7F0Jon+1oWL7uqet5i1IgHX0fUw/+z0QwEcA3zs5xHg=";
   };
+  fmt = fetchFromGitHub {
+    owner = "fmtlib";
+    repo = "fmt";
+    rev = "10.2.1";
+    hash = "sha256-pEltGLAHLZ3xypD/Ur4dWPWJ9BGVXwqQyKcDWVmC3co=";
+  };
 in
 buildPythonPackage rec {
   pname = "mlx";
@@ -58,6 +64,7 @@ buildPythonPackage rec {
       (lib.cmakeBool "MLX_BUILD_METAL" false)
       (lib.cmakeOptionType "filepath" "FETCHCONTENT_SOURCE_DIR_GGUFLIB" "${gguf-tools}")
       (lib.cmakeOptionType "filepath" "FETCHCONTENT_SOURCE_DIR_JSON" "${nlohmann_json}")
+      (lib.cmakeOptionType "filepath" "FETCHCONTENT_SOURCE_DIR_FMT" "${fmt}")
     ];
   };
 
@@ -66,8 +73,6 @@ buildPythonPackage rec {
     pybind11
     xcbuild
     zsh
-    gguf-tools
-    nlohmann_json
     setuptools
     nanobind
     openmpi
