@@ -9,6 +9,7 @@
   blas,
   lapack,
   setuptools,
+  nanobind,
 }:
 
 let
@@ -47,7 +48,9 @@ buildPythonPackage rec {
 
   postPatch = ''
     substituteInPlace CMakeLists.txt \
-      --replace "/usr/bin/xcrun" "${xcbuild}/bin/xcrun" \
+      --replace-fail "/usr/bin/xcrun" "${xcbuild}/bin/xcrun"
+    substituteInPlace pyproject.toml \
+      --replace-fail "nanobind==2.2.0" "nanobind"
   '';
 
   dontUseCmakeConfigure = true;
@@ -70,6 +73,7 @@ buildPythonPackage rec {
     gguf-tools
     nlohmann_json
     setuptools
+    nanobind
   ];
 
   buildInputs = [
